@@ -5,11 +5,15 @@
 
 %%
 
-[ \t\n]+    { /* skip */ }
+[ \t]+    { /* skip */ }
 
-"."         { return DOT; }
-[A-Z][a-z]* { return CAPITAL_WORD; }
-[a-z]+      { return WORD; }
+"."         { return _DOT; }
+"!"         { return _EMARK; }
+"?"         { return _QMARK; }
+","					{ return _COMA; }
+[A-Z][a-z]* { return _CAPITAL_WORD; }
+[a-z]+      { return _WORD; }
+"\n"+ 		{ return _NL;}
                      
 .           { printf("\nline %d: LEXICAL ERROR on char %c", 
                       yylineno, *yytext); }    
