@@ -1,0 +1,88 @@
+Zadatak 1
+
+Prosiriti miniC gramatiku tako da omoguci 
+definisanje lokalnih promenljivih unutar bloka
+i realizovati adekvatne semanticke provere:
+- lokalna promenljiva koja je definisana unutar bloka
+  vazi od momenta deklaracije do kraja tog bloka
+- ako postoje 2 promenljive koje se isto zovu 
+  a definisane su u 2 ugnjezdena bloka?
+
+Primer:
+
+  int main() {
+    int x;
+    int y;
+
+    x = 2;
+    y = 3;
+
+    {
+      int x;        // nova promenljiva x (lokalna za ovaj blok)
+      x = 5;
+
+      y = x + y;    // y = 8; 
+                    // koristi se unutrasnja promenljiva x
+                    // i spoljasnja promenljiva y
+    }
+
+    return x + y;   // 10 (spoljasnji x i y)
+  }
+
+  int main() {
+    int x;
+    x = 2;
+    {
+      int z;
+      x = 5;
+    }
+    return x + z;   // error - z se ne vidi van bloka
+  }
+
+
+POMOC:
+- funkcija print_symtab() radi prikaz tabele simbola
+- polje atr2 za VAR je neiskorisceno
+- funkcija clear_symbols(begin_index) radi 
+  brisanje tabele simbola od elementa begin_index
+- funkcija get_last_element() vraca 
+  indeks poslednjeg popunjenog elementa iz tabele simbola
+
+
+Zadatak 2
+
+Proširiti miniC gramatiku pojednostavljenim switch iskazom. 
+Sintaksa switch iskaza ima oblik:
+
+"switch" "(" <switch_expression> ")" "{"
+    "case" <constant_expression> ":" <case_body> [ "break" ";" ]
+     ...
+    [ "default" ":" <default_statement> ]
+"}"
+
+<switch_expression> predstavlja ime promenljive
+<constant_expression> predstavlja konstantu
+<case_body> predstavlja iskaz (statement)
+<default_statement> predstavlja iskaz (statement)
+
+Pri tome:
+- Mora postojati bar jedna case naredba.
+- break naredba se opciono može pojaviti samo na kraju case naredbe.
+- default naredba je opciona i moze se pojaviti samo posle svih case naredbi
+
+Realizovati sledeće semantičke provere:
+- Promenljiva u <switch_expression> mora biti prethodno deklarisana
+- Konstante u svim case iskazima moraju biti jedinstvene
+- Tip konstante u case naredbi mora biti isti kao tip promenljive
+  u <switch_expression>
+
+NAPOMENA: 
+Prilikom testiranja ne treba testirati ugnježdene switch iskaze.
+
+Primer:
+  switch(state) {
+    case 1: x = 1; break;
+    case 2: { x = 5;} break;
+    default: x = 10;
+  }
+
