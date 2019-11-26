@@ -24,9 +24,14 @@
 %token _COMA
 %token _AROP
 %token _RELOP
+%token _LOGOP
 %token _DO
 %token _INC
 %token _WHILE
+%token _STEP
+%token _NEXT
+%token _DIR
+%token _FOR
 %nonassoc ONLY_IF
 %nonassoc _ELSE
 
@@ -84,8 +89,16 @@ statement
   | return_statement
 	| do_statement
 	| inkrement
+	| for_statement
   ;
+for_deo
+	:	_FOR _ID _ASSIGN literal _DIR literal 
+	|	for_deo _STEP literal
+	;
 
+for_statement
+	: for_deo statement _NEXT _ID 
+	;
 compound_statement
   : _LBRACKET statement_list _RBRACKET
   ;
@@ -129,10 +142,14 @@ if_statement
   ;
 
 if_part
-  : _IF _LPAREN rel_exp _RPAREN statement
+  : _IF _LPAREN log_exp _RPAREN statement
   ;
 do_statement
 	:_DO statement_list _WHILE _LPAREN rel_exp _RPAREN _SEMICOLON
+	;
+log_exp
+	:	rel_exp
+	| log_exp _LOGOP rel_exp
 	;
 rel_exp
   : num_exp _RELOP num_exp

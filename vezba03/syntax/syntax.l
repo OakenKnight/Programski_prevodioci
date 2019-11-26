@@ -16,6 +16,11 @@
 "return"             { return _RETURN; }
 "do"								{return _DO;}
 "while" 						{return _WHILE;}
+"next" 							{return _NEXT;}
+"step" 							{return _STEP;}
+"to" 								{return _DIR;}
+"downto" 								{return _DIR;}
+"for"									{return _FOR;}
 "("                  { return _LPAREN; }
 ")"                  { return _RPAREN; }
 "{"                  { return _LBRACKET; }
@@ -26,6 +31,8 @@
 "++"									{return _INC;}
 "+"                  { return _AROP; }
 "-"                  { return _AROP; }
+"&&"								{return _LOGOP;}
+"||"								{return _LOGOP;}
 
 "<"                  { return _RELOP; }
 ">"                  { return _RELOP; }

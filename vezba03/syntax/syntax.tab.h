@@ -61,10 +61,15 @@ extern int yydebug;
     _COMA = 271,
     _AROP = 272,
     _RELOP = 273,
-    _DO = 274,
-    _INC = 275,
-    _WHILE = 276,
-    ONLY_IF = 277
+    _LOGOP = 274,
+    _DO = 275,
+    _INC = 276,
+    _WHILE = 277,
+    _STEP = 278,
+    _NEXT = 279,
+    _DIR = 280,
+    _FOR = 281,
+    ONLY_IF = 282
   };
 #endif
 
