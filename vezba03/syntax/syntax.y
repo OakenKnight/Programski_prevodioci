@@ -21,9 +21,12 @@
 %token _RBRACKET
 %token _ASSIGN
 %token _SEMICOLON
+%token _COMA
 %token _AROP
 %token _RELOP
-
+%token _DO
+%token _INC
+%token _WHILE
 %nonassoc ONLY_IF
 %nonassoc _ELSE
 
@@ -57,11 +60,16 @@ body
 
 variable_list
   : /* empty */
-  | variable_list variable
+  | variable_list variables
+  ;
+
+variables
+  : type variable _SEMICOLON
   ;
 
 variable
-  : type _ID _SEMICOLON
+  : _ID
+	| variable _COMA _ID
   ;
 
 statement_list
@@ -74,6 +82,8 @@ statement
   | assignment_statement
   | if_statement
   | return_statement
+	| do_statement
+	| inkrement
   ;
 
 compound_statement
@@ -92,10 +102,13 @@ num_exp
 exp
   : literal
   | _ID
+	| _ID _INC 
   | function_call
-  | _LPAREN num_exp _RPAREN
+  | _LPAREN num_exp _RPAREN 
   ;
-
+inkrement
+	:_ID _INC _SEMICOLON
+	;
 literal
   : _INT_NUMBER
   | _UINT_NUMBER
@@ -111,14 +124,16 @@ argument
   ;
 
 if_statement
-  : if_part %prec ONLY_IF
+  : if_part %prec ONLY_IF //privremena kao idk
   | if_part _ELSE statement
   ;
 
 if_part
   : _IF _LPAREN rel_exp _RPAREN statement
   ;
-
+do_statement
+	:_DO statement_list _WHILE _LPAREN rel_exp _RPAREN _SEMICOLON
+	;
 rel_exp
   : num_exp _RELOP num_exp
   ;

@@ -14,14 +14,16 @@
 "if"                 { return _IF; }
 "else"               { return _ELSE; }
 "return"             { return _RETURN; }
-
+"do"								{return _DO;}
+"while" 						{return _WHILE;}
 "("                  { return _LPAREN; }
 ")"                  { return _RPAREN; }
 "{"                  { return _LBRACKET; }
 "}"                  { return _RBRACKET; }
 ";"                  { return _SEMICOLON; }
+","                  { return _COMA; }
 "="                  { return _ASSIGN; }
-
+"++"									{return _INC;}
 "+"                  { return _AROP; }
 "-"                  { return _AROP; }
 
