@@ -1,7 +1,12 @@
-//OPIS: jedna deklaracija sa tri promenljive
+//OPIS: dve petlje
 int main() {
-    unsigned a,b,c;
-    a = 2u;
-    b = 3u;
-    c = 4u;
+    int a;
+    unsigned b;
+    do
+      a = a + 1;
+    while (a < 100);
+    do
+      b = b + 1u;
+    while (b < 100u);
 }
+

@@ -1,4 +1,7 @@
-//OPIS: zarez pre kraja
+//OPIS: bez iskaza
 int main() {
-    int a,b,;
+    int a;
+    do
+    while (a < 100);
 }
+

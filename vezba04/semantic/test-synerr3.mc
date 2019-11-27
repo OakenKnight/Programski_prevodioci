@@ -1,4 +1,8 @@
-//OPIS: dva zareza
+//OPIS: pomenljiva umesto konstante
 int main() {
-    int a,,b;
+    int a;
+    int b;
+    do
+    while (a < b);
 }
+

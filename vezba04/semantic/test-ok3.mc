@@ -1,6 +1,14 @@
-//OPIS: više deklaracija sa više promenljivih
+//OPIS: dve petlje unutar if-a
 int main() {
-    int a,b;
-    int c,d,e,f;
-    unsigned g;
+    int a;
+    unsigned b;
+    if (a == 0)
+        do
+          a = a + 1;
+        while (a < 100);
+    else
+        do
+          b = b + 1u;
+        while (b < 100u);
 }
+

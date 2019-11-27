@@ -1,5 +1,8 @@
-//OPIS: ponovljena promenljiva
+//OPIS: pogrešan tip
 int main() {
-    int a,b,c,d,e,f,b,g;
+    unsigned a;
+    do
+      a = a + 2u;
+    while (a < 42);
 }
 
