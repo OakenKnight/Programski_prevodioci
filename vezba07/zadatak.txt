@@ -24,7 +24,7 @@ Realizovati semantičku proveru:
 promenljiva ne sme biti prethodno deklarisana.
 
 POMOĆ:
-Globalni i lokalni identifikatori mogu imati isto
+Globalni i lokalni identifikatori mo	gu imati isto
 ime, pa se u tabeli simbola moraju razlikovati.
 
 

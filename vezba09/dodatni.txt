@@ -30,8 +30,28 @@ Primer1:
   switch (state) {
     case 10: { s = 1; } break;
     case 20: s = 2;
-    default: s = 0;
+		case 12: s = 3;    
+		default: s = 0;
   } 
+
+switch:
+	cmpb $10,state
+	je case10
+	cmpb $20,state
+	je case20
+	cmpb $12,state
+	je case12
+	jmp default
+case10:
+	mov $1, s
+	jmp exit
+case20:
+	mov $2, s
+case12:
+	mov $3,s
+default:
+	mov $0, s
+exit:
 
 Primer2:
 

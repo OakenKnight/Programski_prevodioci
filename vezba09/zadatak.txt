@@ -2,7 +2,7 @@ Zadatak 1
 
 Proširiti miniC iskaze for petljom koja izgleda ovako:
 
-  "for" _LPAREN <name> "=" <lit> ";" <rel> ";" <name> "++")
+  "for" "(" <name> "=" <lit> ";" <rel> ";" <name> "++")
       <statement>
 
 gde je:
@@ -26,6 +26,10 @@ Primer:
   int suma;
   int i;
   suma = 0;
-  for(i = 0; i < 5; i++)
+  for(i = 0; i < 5; i++) {//lab_num = 0
+		for(...) {//lab_num = 1
+
+		}
+	}
     suma = suma + i;
 

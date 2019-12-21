@@ -256,18 +256,19 @@ compound_statement
   : _LBRACKET
 		{
 			lvl++;
-			$<i>$ = get_last_element();
+			$<i>$ = get_last_element(); //ovo je zato sto nam treba da znamo da ce ta vrednost biti int i da to mozemo da strpamo u $$ i ne bi bas bilo kul da stavim u %type <i> jer to se onda odnosi na ceo compound_statement a ovako samo na akciju na vrednosti tokena $2
 		}
 		 variable_list statement_list _RBRACKET
 		{
 			lvl--;
-			clear_symbols($<i>2 + 1);		
+			clear_symbols($<i>2 + 1);		//dvojka je zato sto treba da brisem od poslednjeg elementa pa plus 1 jer je poslednji element vrednost akcije sa tokenom $2 
 		}
   ;
 
 assignment_statement
   : assigns num_exp _SEMICOLON
       {
+					
           if(get_type($1) != get_type($2))
             err("incompatible types in assignment");
       }
