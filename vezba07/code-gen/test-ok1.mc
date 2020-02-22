@@ -1,15 +1,13 @@
 //OPIS: ABS funkcija
-//RETURN: 5
-
-int abs(int i) {
-  int res;
-  if(i < 0)
-    res = 0 - i;
-  else 
-    res = i; 
-  return res;
-}
-
+//RETURN: 6
 int main() {
-  return abs(-5);
+	int a;
+	int j;
+	int x;
+	a=0;
+	j=1;
+	x=2;
+	
+	a = x++ + j++ + 3; 
+  return a;
 }

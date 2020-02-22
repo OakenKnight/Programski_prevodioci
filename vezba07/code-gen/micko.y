@@ -19,6 +19,8 @@
   int fun_idx = -1;
   int fcall_idx = -1;
   int lab_num = -1;
+	int vars_to_inc[100];
+	int var_num_to_inc=0;
   FILE *output;
 %}
 
@@ -53,27 +55,18 @@
 %%
 
 program
-  : global_list function_list
+  : function_list
       {  
         if(lookup_symbol("main", FUN) == NO_INDEX)
           err("undefined reference to 'main'");
       }
   ;
-global_list
-	:
-	| global_list global_var
-	;
+
 function_list
   : function
   | function_list function
   ;
-global_var
-	:	_TYPE _ID _SEMICOLON
-		{
- 		insert_symbol($2, GLOB, $1, NO_ATR, NO_ATR);
-		code("\n%s:\n\t\tWORD\t1",$2);
-		}
-	;
+
 function
   : _TYPE _ID
       {
@@ -146,20 +139,8 @@ statement
   | assignment_statement
   | if_statement
   | return_statement
-	| postinc_statement
   ;
-postinc_statement
-	: _ID _INC _SEMICOLON
-		{
-				 int idx = lookup_symbol($1, VAR|PAR|GLOB);
-        if(idx == NO_INDEX)
-          err("'%s' is not declared", $1);	
-					code("\n\t\tADDS\t"); //get_arop_stmt(ADD,get_type(idx))
-					gen_sym_name(idx);
-					code(",$1,");
-					gen_sym_name(idx);
-		}
-	;
+
 compound_statement
   : _LBRACKET statement_list _RBRACKET
   ;
@@ -167,13 +148,22 @@ compound_statement
 assignment_statement
   : _ID _ASSIGN num_exp _SEMICOLON
       {
-        int idx = lookup_symbol($1, VAR|PAR|GLOB);
+        int idx = lookup_symbol($1, VAR|PAR);
         if(idx == NO_INDEX)
           err("invalid lvalue '%s' in assignment", $1);
         else
           if(get_type(idx) != get_type($3))
             err("incompatible types in assignment");
+				for(int i = 0; i<var_num_to_inc; i++){
+					int idx=vars_to_inc[i];
+        	code("\n\t\t%s\t", ar_instructions[(get_type(vars_to_inc[i])-1)*AROP_NUMBER]);
+        	gen_sym_name(idx);
+        	code(",$1,");
+        	gen_sym_name(idx);
+        }
+        var_num_to_inc = 0;
         gen_mov($3, idx);
+				
       }
   ;
 
@@ -203,7 +193,7 @@ exp
 
   | _ID
       {
-        $$ = lookup_symbol($1, VAR|PAR|GLOB);
+        $$ = lookup_symbol($1, VAR|PAR);
         if($$ == NO_INDEX)
           err("'%s' undeclared", $1);
       }
@@ -216,16 +206,12 @@ exp
   
   | _LPAREN num_exp _RPAREN
       { $$ = $2; }
-	|  _ID _INC 
+	| _ID _INC
 		{
-				 int idx = lookup_symbol($1, VAR|PAR|GLOB);
-        if(idx == NO_INDEX)
-          err("'%s' is not declared", $1);	
-					code("\n\t\tADDS\t"); //get_arop_stmt(ADD,get_type(idx))
-					gen_sym_name(idx);
-					code(",$1,");
-					gen_sym_name(idx);
-			$$= lookup_symbol($1, VAR|PAR|GLOB);
+			$$=lookup_symbol($1, VAR|PAR);
+			if($$==NO_INDEX)
+          err("'%s' undeclared", $1);
+			vars_to_inc[var_num_to_inc++] = $$;
 		}
   ;
 
@@ -246,6 +232,16 @@ function_call
       }
     _LPAREN argument _RPAREN
       {
+			
+				for(int i = 0; i<var_num_to_inc; i++){
+					int idx=vars_to_inc[i];
+        	code("\n\t\t%s\t", ar_instructions[ADD + (get_type(vars_to_inc[i])-1)*AROP_NUMBER]);
+        	gen_sym_name(idx);
+        	code(",$1,");
+        	gen_sym_name(idx);
+        }
+        var_num_to_inc = 0;
+				
         if(get_atr1(fcall_idx) != $4)
           err("wrong number of arguments");
         code("\n\t\t\tCALL\t%s", get_name(fcall_idx));

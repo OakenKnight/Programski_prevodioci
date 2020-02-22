@@ -1,0 +1,35 @@
+//OPIS: for ispisuje i
+//RETURN: 14
+int main()
+{
+    int a;
+    int b;
+		b=0;
+		
+		petljaj a u opsegu od 2 do 5:
+		b = b + a;
+	return b;
+}
+
+
+for a = 7 DIRECTION 10 [step literal] 
+	statement
+next;
+
+
+pocetak:
+	mov 7,a
+	
+
+
+
+
+priprema:
+	mov $2,a
+petljaj:
+	cmpb a,$5
+	jge kraj
+	statement
+	jmp petljaj
+kraj:
+	

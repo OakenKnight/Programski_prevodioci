@@ -12,18 +12,34 @@
 
 "int"                { yylval.i = INT;  return _TYPE; }
 "unsigned"           { yylval.i = UINT; return _TYPE; }
+
+"to"									{yylval.i = _TO; return _DIRECTION;}
+"downto"							{yylval.i=_DOWNTO; return _DIRECTION;}
 "if"                 { return _IF; }
 "else"               { return _ELSE; }
 "return"             { return _RETURN; }
-"++"									{return _INC;}
-"for"									{return _FOR;}
+"for"		             { return _FOR; }
+"while"							 { return _WHILE; }
+"case"							 { return _CASE; }
+"break"							 { return _BREAK; }
+"default"						 { return _DEFAULT; }
+"switch"						 { return _SWITCH; }
+"do"								 { return _DO; }
+"step"								{return _STEP;}
+"prekid"						 { return _PREKID; }
+"preskok"						 { return _PRESKOK; }
+"petljaj"						 { return _PETLJAJ;}
+"next"								{ return _NEXT;}
+"u opsegu"						 { return _U_OPSEGU;}
+"od"								 { return _OD; }
 "("                  { return _LPAREN; }
 ")"                  { return _RPAREN; }
 "{"                  { return _LBRACKET; }
 "}"                  { return _RBRACKET; }
 ";"                  { return _SEMICOLON; }
+":"									 { return _COLON; }
 "="                  { return _ASSIGN; }
-
+"++"								 { return _INC;}
 "+"                  { yylval.i = ADD; return _AROP; }
 "-"                  { yylval.i = SUB; return _AROP; }
 

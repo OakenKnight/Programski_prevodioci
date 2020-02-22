@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.4.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 #ifndef YY_YY_MICKO_TAB_H_INCLUDED
 # define YY_YY_MICKO_TAB_H_INCLUDED
 /* Debug traces.  */
@@ -48,36 +52,53 @@ extern int yydebug;
     _TYPE = 258,
     _IF = 259,
     _ELSE = 260,
-    _RETURN = 261,
-    _ID = 262,
-    _INT_NUMBER = 263,
-    _UINT_NUMBER = 264,
-    _LPAREN = 265,
-    _RPAREN = 266,
-    _LBRACKET = 267,
-    _RBRACKET = 268,
-    _ASSIGN = 269,
-    _SEMICOLON = 270,
-    _INC = 271,
-    _AROP = 272,
-    _RELOP = 273,
-    _FOR = 274,
-    ONLY_IF = 275
+    _DIRECTION = 261,
+    _RETURN = 262,
+    _ID = 263,
+    _INT_NUMBER = 264,
+    _UINT_NUMBER = 265,
+    _LPAREN = 266,
+    _STEP = 267,
+    _RPAREN = 268,
+    _LBRACKET = 269,
+    _RBRACKET = 270,
+    _ASSIGN = 271,
+    _FOR = 272,
+    _BREAK = 273,
+    _DEFAULT = 274,
+    _WHILE = 275,
+    _INC = 276,
+    _CASE = 277,
+    _COLON = 278,
+    _SWITCH = 279,
+    _SEMICOLON = 280,
+    _DO = 281,
+    _U = 282,
+    _OD = 283,
+    _PETLJAJ = 284,
+    _U_OPSEGU = 285,
+    _PREKID = 286,
+    _PRESKOK = 287,
+    _NEXT = 288,
+    _AROP = 289,
+    _RELOP = 290,
+    ONLY_IF = 291
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 25 "micko.y" /* yacc.c:1909  */
+#line 30 "micko.y"
 
   int i;
   char *s;
 
-#line 80 "micko.tab.h" /* yacc.c:1909  */
+#line 99 "micko.tab.h"
+
 };
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

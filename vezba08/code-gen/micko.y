@@ -40,15 +40,18 @@
 %token _RBRACKET
 %token _ASSIGN
 %token _SEMICOLON
-%token _COLON
 %token <i> _AROP
+%token <i> _MDOP
 %token <i> _RELOP
-%token _QUESTION
+
 %type <i> num_exp exp literal
-%type <i> function_call argument rel_exp if_part izraz	
+%type <i> function_call argument rel_exp if_part
 
 %nonassoc ONLY_IF
 %nonassoc _ELSE
+
+%left _AROP
+%left _MDOP
 
 %%
 
@@ -156,22 +159,10 @@ assignment_statement
       }
   ;
 
-izraz
-	:_ID
-		{
-        int idx = lookup_symbol($1, VAR|PAR);
-				 if(idx == NO_INDEX)
-          err("invalid lvalue '%s' in assignment", $1);
-        $$=idx;
-
-      
-		}
-	|literal
-	;
 num_exp
   : exp
 
-  | num_exp _AROP exp
+  | num_exp _AROP num_exp
       {
         if(get_type($1) != get_type($3))
           err("invalid operands: arithmetic operation");
@@ -187,7 +178,28 @@ num_exp
         gen_sym_name($$);
         set_type($$, t1);
       }
-	
+	| num_exp _MDOP exp
+		{
+		{
+		if (get_type($1) != get_type($3))
+          {
+            err("invalid operands : Arithmetic operation");
+          }
+          int type = get_type($1);
+
+          code("\n\t\t%s\t", ar_instructions[$2 + (type - 1) * AROP_NUMBER]);
+          gen_sym_name($1);
+          code(",");
+          gen_sym_name($3);
+          code(",");
+          free_if_reg($3);
+          free_if_reg($1);
+          $$ = take_reg();
+          gen_sym_name($$);
+          set_type($$, type);
+		}
+
+		}
   ;
 
 exp
@@ -208,26 +220,6 @@ exp
   
   | _LPAREN num_exp _RPAREN
       { $$ = $2; }
-	| _LPAREN  rel_exp  _RPAREN _QUESTION izraz _COLON izraz
-		{
-			int idx=take_reg();
-			lab_num++;
-
-			if(get_type($5)!=get_type($7))
-					err("incompatible types in assignment");
-
-
-			code("\n\t\t%s\t@false%d", opp_jumps[$2],lab_num);
-			
-			code("\n\t\t@true%d:",lab_num);
-			gen_mov($5,idx);
-			code("\n\t\tJMP\t@exit%d",lab_num);
-
-			code("\n\t\t@false%d:",lab_num);
-			gen_mov($7,idx);
-			code("\n\t\t@exit%d:",lab_num);
-			$$=idx;
-		}	
   ;
 
 literal
@@ -288,8 +280,7 @@ if_part
       }
     rel_exp
       {
-        code("\n\t\t%s\t@false%d", opp_jumps[$4], $<i>3); /*$4 je JNE skoci ako nisu jednaki sto je 															opozitni jump, skace ako niej ispunjen uslov iz opp_jumps[]={"JGES", "JLES", 																																						"JGTS", "JLTS", "JNE ", "JEQ ",
-                  																								        "JGEU", "JLEU", "JGTU", "JLTU", 																																					"JNE ", "JEQ "};*/
+        code("\n\t\t%s\t@false%d", opp_jumps[$4], $<i>3);
         code("\n@true%d:", $<i>3);
       }
     _RPAREN statement

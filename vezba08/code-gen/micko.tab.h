@@ -62,11 +62,10 @@ extern int yydebug;
     _RBRACKET = 268,
     _ASSIGN = 269,
     _SEMICOLON = 270,
-    _COLON = 271,
-    _AROP = 272,
+    _AROP = 271,
+    _MDOP = 272,
     _RELOP = 273,
-    _QUESTION = 274,
-    ONLY_IF = 275
+    ONLY_IF = 274
   };
 #endif
 
@@ -79,7 +78,7 @@ union YYSTYPE
   int i;
   char *s;
 
-#line 83 "micko.tab.h"
+#line 82 "micko.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

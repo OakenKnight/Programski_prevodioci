@@ -1,33 +1,12 @@
-//OPIS: Konstante
-//RETURN: 110
-
-int f(int x) {
-  int z;
-  return x + z;
-} 
-
-int y() {
-  return 2147483647; //max int
-}
-
+//opis idk man
+//RETURN: 53
 int main() {
-  int a;
-  unsigned b;
-  a = 0;
+    int x;
+    int y;
+		y = 0;
+    x = 3;
 
-  if (a < -10)
-    a = f(a + 3);
-  else
-    a = y();
-  a = -556;
+    y = x++ + x++ + 42;
 
-  return a + 666;   //110
-}
-
-unsigned z() {
-  unsigned b;
-  b = 16u;
-  if (b < 10u)
-    b = 3u;
-  return b + 4u;
+    return x + y;
 }

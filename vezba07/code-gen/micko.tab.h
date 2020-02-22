@@ -73,7 +73,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 25 "micko.y"
+#line 27 "micko.y"
 
   int i;
   char *s;

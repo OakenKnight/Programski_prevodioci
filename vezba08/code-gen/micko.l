@@ -21,12 +21,12 @@
 "{"                  { return _LBRACKET; }
 "}"                  { return _RBRACKET; }
 ";"                  { return _SEMICOLON; }
-":"                  { return _COLON; }
-"?"										{return _QUESTION;}
 "="                  { return _ASSIGN; }
-
+"++"								 { return _INC;}
 "+"                  { yylval.i = ADD; return _AROP; }
 "-"                  { yylval.i = SUB; return _AROP; }
+"*"                  { yylval.i = MUL; return _MDOP; }
+"/"                  { yylval.i = DIV; return _MDOP; }
 
 "<"                  { yylval.i = LT; return _RELOP; }
 ">"                  { yylval.i = GT; return _RELOP; }

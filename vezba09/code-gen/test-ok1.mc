@@ -1,17 +1,13 @@
-//OPIS: Sanity check za miniC gramatiku
-//RETURN: 25
-int main() {
-  int a;
-  int b;
-	int i;
-	int suma;
-	int j;
-	suma=0;
-	for(i=0;i<5;i++)
-			for(j=0;j<5;j++)
-				suma = suma + 1;
- 
+//OPIS: for ispisuje i
+//RETURN: 9
+int main()
+{
+    int a;
+    int b;
+		b=0;
+		
+		petljaj a u opsegu od 2 do 5:
+		b = b + a;
 
-  return suma;
+	return b;
 }
-

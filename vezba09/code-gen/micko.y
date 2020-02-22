@@ -19,6 +19,11 @@
   int fun_idx = -1;
   int fcall_idx = -1;
   int lab_num = -1;
+	int switch_literals[100];
+	int switch_literal_num=0;
+	int switch_var;
+	int switch_num=-1;
+	int lvl=-1;
   FILE *output;
 %}
 
@@ -30,22 +35,38 @@
 %token <i> _TYPE
 %token _IF
 %token _ELSE
+%token <i> _DIRECTION
 %token _RETURN
 %token <s> _ID
 %token <s> _INT_NUMBER
 %token <s> _UINT_NUMBER
 %token _LPAREN
+%token _STEP
 %token _RPAREN
 %token _LBRACKET
 %token _RBRACKET
 %token _ASSIGN
-%token _SEMICOLON
+%token _FOR
+%token _BREAK
+%token _DEFAULT
+%token _WHILE
 %token _INC
+%token _CASE
+%token _COLON
+%token _SWITCH
+%token _SEMICOLON
+%token _DO
+%token _U
+%token _OD
+%token _PETLJAJ
+%token _U_OPSEGU
+%token _PREKID
+%token _PRESKOK
+%token _NEXT
 %token <i> _AROP
 %token <i> _RELOP
-%token _FOR
-%type <i> num_exp exp literal
-%type <i> function_call argument rel_exp if_part
+%type <i> num_exp exp literal 
+%type <i> function_call argument rel_exp if_part 
 
 %nonassoc ONLY_IF
 %nonassoc _ELSE
@@ -137,49 +158,299 @@ statement
   | assignment_statement
   | if_statement
   | return_statement
-	| for_statement
+	|	for_stmt 
+	| while_statement
+	| switch_statement
+	| petljaj_statement
+	| basic_for
   ;
-for_statement
-	: _FOR _LPAREN _ID _ASSIGN literal 
-		{	
+basic_for
+	: _FOR _ID _ASSIGN literal 
+		{
 			lab_num++;
-			$<i>$ =lab_num;
-			int idx = lookup_symbol($3, VAR|PAR);
+			$<i>$ = lab_num;
+			int idx=lookup_symbol($2, VAR|PAR);
+			if(idx==NO_INDEX)
+				err("%s undeclared",$2);
+			else
+				if(get_type(idx)!=get_type($4))
+					err("wrong types in assingment");
+			code("\npocetak%d:",lab_num);
+			gen_mov($4,idx);
+		}_DIRECTION literal 
+		{
+			int idx=lookup_symbol($2, VAR|PAR);
+			if(get_type($4)!=get_type($7))
+				err("incompatible types in smth");
+
+		
+			code("\npetlja%d:",$<i>5);
+			if($6==_TO){
+
+				if(atoi(get_name($4))>atoi(get_name($7)))
+					err("wrong direction");
+				else	if(get_type($4)==INT){
+
+					code("\n\t\tCMPS\t");
+					gen_sym_name(idx);
+					code(",$%d",atoi(get_name($7)));
+					code("\n\t\tJGES\texit%d",$<i>5);
+				}else if(get_type($4)==UINT){
+					code("\n\t\tCMPU\t");
+					gen_sym_name(idx);
+					code(",$%d",atoi(get_name($7)));
+					code("\n\t\tJGEU\texit%d",$<i>5);
+				}
+			}else{
+
+				if(atoi(get_name($4))<atoi(get_name($7)))
+					err("wrong direction");
+				else if(get_type($4)==INT){
+
+					code("\n\t\tCMPS\t");
+					gen_sym_name(idx);
+					code(",$%d",atoi(get_name($7)));
+					code("\n\t\tJLES\texit%d",$<i>5);
+				}else if(get_type($4)==UINT){
+					code("\n\t\tCMPU\t");
+					gen_sym_name(idx);
+					code(",$%d",atoi(get_name($7)));
+					code("\n\t\tJLEU\texit%d",$<i>5);
+				}
+			}
+		}maybe_step statement 
+		{			int idx=lookup_symbol($2, VAR|PAR);
+				if($6==_TO){
+				if(get_type($4)==INT){
+
+					code("\n\t\tADDS\t");
+					gen_sym_name(idx);
+					code(",$%d,",$<i>9);
+					gen_sym_name(idx);
+
+				}else if(get_type($4)==UINT){
+					code("\n\t\tADDU\t");
+					gen_sym_name(idx);
+					code(",$%d,",$<i>9);
+					gen_sym_name(idx);
+				}
+			}else{
+					if(get_type($4)==INT){
+
+					code("\n\t\tSUBS\t");
+					gen_sym_name(idx);
+					code(",$%d,",$<i>9);
+					gen_sym_name(idx);
+				} else if(get_type($4)==UINT){
+					code("\n\t\tSUBU\t");
+					gen_sym_name(idx);
+					code(",$%d,",$<i>9);
+					gen_sym_name(idx);
+				}
+			}	
+		}_NEXT 
+		{
+			code("\n\t\tJMP\tpetlja%d",$<i>5);
+			code("\nexit%d:",$<i>5);
+		}_SEMICOLON;
+;
+maybe_step
+	: {$<i>$=1;}
+	| _STEP literal
+		{
+			$<i>$=atoi(get_name($2));
+		}
+	;
+petljaj_statement
+	: _PETLJAJ _ID {
+			lab_num++;
+			int idx=lookup_symbol($2, VAR|PAR);
+			if(idx==NO_INDEX)
+				err("%s undeclared",$2);
+			$<i>$=lab_num;
+		}_U_OPSEGU _OD literal _DO literal {
+			int idx=lookup_symbol($2, VAR|PAR);
+			if(get_type(idx)!=get_type($6) || get_type(idx)!=get_type($8) || atoi(get_name($6))>atoi(get_name($8)))
+				err("error in types or second smaller than first literal");
+			code("\npriprema%d:",$<i>3);
+			gen_mov($6,idx);
+			code("\npetljaj%d:", $<i>3);
+			if(get_type($6)==INT){
+				code("\n\t\tCMPS\t");
+				gen_sym_name(idx);
+				code(",");
+				gen_sym_name($8);
+				code("\n\t\tJGES\texit%d",$<i>3);
+			}else{
+
+				code("\n\t\tCMPU\t");
+				gen_sym_name(idx);
+				code(",");
+				gen_sym_name(idx);
+				code("\n\t\tJGEU\texit%d",$<i>3);
+			}
+
+		}_COLON statement 
+		{			int idx=lookup_symbol($2, VAR|PAR);
+				if(get_type($6)==INT){
+				code("\n\t\tADDS\t");
+				gen_sym_name(idx);
+				code(",$1,");
+				gen_sym_name(idx);
+			}else{
+
+				code("\n\t\tADDU\t");
+				gen_sym_name(idx);
+				code(",$1,");
+				gen_sym_name($8);
+			}
+	
+			code("\n\t\tJMP\tpetljaj%d",$<i>3);
+			code("\nexit%d:",$<i>3);
+		}
+	;
+
+switch_statement
+	: _SWITCH
+	{
+		switch_num++;
+		code("\nswitch%d:",switch_num);
+		switch_literal_num=0;
+		code("\n\t\tJMP\tswitches%d",switch_num);
+	} _LPAREN _ID 
+	{
+
+		int idx = lookup_symbol($4, VAR|PAR);
         if(idx == NO_INDEX)
-          err("'%s' undeclared", $3);
- 				else
-          if(get_type(idx) != get_type($5))
+          err("'%s' is undeclared", $4);
+		switch_var=idx;
+
+	}_RPAREN _LBRACKET cases
+	{
+		code("\ndefault%d:",switch_num);
+	} default _RBRACKET
+	{
+		code("\n\t\tJMP\texit%d",switch_num);
+		code("\n\t\tswitches%d:",switch_num);
+		int i;
+		for(i=0;i<switch_literal_num;i++){
+			gen_cmp(switch_literals[i],switch_var);
+			code("\n\t\tJEQ\tcase%s",get_name(switch_literals[i]));
+		}	
+
+		code("\n\t\tJMP\tdefault%d",switch_num);
+
+
+		code("\nexit%d:",switch_num);
+	}
+	;
+cases
+	: case
+	|	cases case
+	;
+case
+	: _CASE literal
+		{
+			if(get_type($2)!=get_type(switch_var))
+			  err("incompatible types in assignment");
+			int i;
+			for(i=0;i<switch_literal_num;i++){
+				if($2==switch_literals[i])
+					err("values in case not unique");		
+			}
+		
+			switch_literals[switch_literal_num++]=$2;
+			code("\ncase%s:",get_name($2));
+		} _COLON statement break
+	;
+break
+	:
+	| _BREAK _SEMICOLON
+		{
+			code("\n\t\tJMP\texit%d",switch_num);		
+		}
+	;
+default
+	:
+	| _DEFAULT _COLON statement
+	;	
+while_statement
+	: _WHILE 
+		{
+			lab_num++;
+			$<i>$=lab_num;
+			code("\nwhile%d:",lab_num);
+		}
+		_LPAREN rel_exp _LBRACKET
+		{
+			code("\n\t\t%s\texit%d",opp_jumps[$4],$<i>2);
+		}
+		_RPAREN statement _ID _INC _SEMICOLON _RBRACKET
+		{
+			int idx = lookup_symbol($9, VAR|PAR);
+        if(idx == NO_INDEX)
+          err("'%s' is undeclared", $9);
+
+			code("\n\t\t%s\t$1,",ar_instructions[(get_type(idx)-1)*AROP_NUMBER]);
+			gen_sym_name(idx);
+      code(",");
+			gen_sym_name(idx);
+      code("\n\t\tJMP\twhile%d",$<i>2);
+			code("\nexit%d:",$<i>2);
+		}
+	;
+
+for_stmt
+	: _FOR _LPAREN _TYPE _ID
+		{	
+			lvl++;
+			int idx = lookup_symbol($4, VAR|PAR);
+        if(idx == NO_INDEX || get_atr2(idx)!=lvl)
+					{
+           insert_symbol($4, VAR, $3, ++var_num,lvl);
+					}
+		$<i>$=get_last_element();
+
+		}_ASSIGN literal 
+		{
+			lab_num++;
+			$<i>$=lab_num;
+			int idx = lookup_symbol($4, VAR|PAR);
+					if(get_type(idx) != get_type($7))
             err("incompatible types in assignment");
-				//for:
-				int ind=take_reg();
-				code("\nPRIPREMA%d:", lab_num);
-				gen_mov($5,idx); //ocekuje indeks u tabeli simbola, kao i svi genovi ostali
-        code("\nFOR%d:",lab_num); //ovo kao u ifu sa ugnjezdenim za sad ce ovako da ostaje bez odredbe koja je labnum	
-				
+
+			code("\npriprema%d:",lab_num);
+			gen_mov($7,idx);
+			code("\nfor%d:",lab_num);
 		}
 		_SEMICOLON rel_exp _SEMICOLON _ID 
-		{		
-				int idx = lookup_symbol($3, VAR|PAR);			
-		
-				code("\n\t\t%s EXIT%d",opp_jumps[$8],$<i>6);
-				
-	
-				//int idx = lookup_symbol($3, VAR|PAR);
-				
-					if(idx!=lookup_symbol($10, VAR|PAR))
-						err("_id1 and _id2 not same operand");
-				
+		{
+			code("\n\t\t%s\texit%d",opp_jumps[$10],$<i>8);
+
+			int idx = lookup_symbol($12, VAR|PAR);
+      if(idx == NO_INDEX)
+        err("'%s' is undeclared", $12);
+			else		
+				if(idx!=lookup_symbol($4, VAR|PAR))
+					err("id1 and id2 not same id");		
+			
+			$<i>$=idx;
 		}
-		_INC _RPAREN statement		{
-			int idx = lookup_symbol($3, VAR|PAR);			
-			code("\n\t\t\tADDS\t $1,");
-			gen_sym_name(idx);
+			_INC	_RPAREN statement
+		{
+
+			code("\n\t\t%s\t$1,",ar_instructions[(get_type(lookup_symbol($12,VAR|PAR))-1)* AROP_NUMBER]);
+
+			gen_sym_name($<i>13);
 			code(",");
-			gen_sym_name(idx);
-			code("\n\t\tJMP FOR%d",$<i>6);
-			code("\nEXIT%d:",$<i>6);
+			gen_sym_name($<i>13);
+			code("\n\t\tJMP\tfor%d",$<i>8);
+			code("\nexit%d:",$<i>8);
+				lvl--;
+
+				clear_symbols($<i>5+1);
+
 		}
-		
 	;
 compound_statement
   : _LBRACKET statement_list _RBRACKET
