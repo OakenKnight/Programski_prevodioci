@@ -1,4 +1,4 @@
-# pp-vezbe
+# Programski prevodioci vezbe
 Zadaci za vežbe iz predmeta Programski prevodioci. 
 Prateći kompajler za <b>miniC</b> se nalazi u direktorijumu <b>micko</b>.
 Uz vežbu 3 se koristi direktorijum <b>syntax</b>.
